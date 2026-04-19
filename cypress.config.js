@@ -3,6 +3,11 @@ const cucumber = require('cypress-cucumber-preprocessor').default;
 
 module.exports = defineConfig({
 
+  env:{
+    USERNAME: 'EmployeeTestAuto',
+    USER_PASSWORD: '123',
+  },
+
   e2e: {
     setupNodeEvents(on, config) {
       // implement node event listeners here

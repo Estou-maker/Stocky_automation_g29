@@ -5,5 +5,6 @@ const loginElements = {
     PasswordInput: 'p-password[name="password"]',
     SubmitBtn: 'p-button[data-testid="btn-submit"]',
     DashboardContainer: 'employee-default[class="ng-star-inserted"]'
-
 }
+
+export default loginElements
