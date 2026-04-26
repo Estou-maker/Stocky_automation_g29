@@ -4,7 +4,8 @@ const loginElements = {
     UsernameInput: 'input[data-testid="input-identifier"]',
     PasswordInput: 'p-password[name="password"]',
     SubmitBtn: 'p-button[data-testid="btn-submit"]',
-    DashboardContainer: 'employee-default[class="ng-star-inserted"]'
+    DashboardContainer: 'employee-default[class="ng-star-inserted"]',
+    ErrorMessage:   'div[data-testid="login-card"]'
 }
 
 export default loginElements

@@ -13,6 +13,10 @@ Feature: Login
         And I click on the submit button
         Then I should see the message "<message>"
         Examples:
-            | user | password | message                       |
-            |      |          | Username or email is required |
-            |      |          | Password is required          |
+            | user      | password | message                                           |
+            |           |          | Username or email is required                     |
+            |           |          | Password is required                              |
+            |           | 123      | Username or email is required                     |
+            | employee1 |          | Password is required                              |
+            | employee1 | 1234     | An error occurred during login. Please try again. |
+            
