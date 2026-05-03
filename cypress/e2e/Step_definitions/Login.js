@@ -31,7 +31,10 @@ When(`I enter valid credentials`, () => {
 
 Then(`I should be redirected to the dashboard`, () => {
     // [Then] Describes the expected outcome or result of the scenario.
-    cy.get(loginElements.DashboardContainer).should('be.visible').should('contain', 'Employee Dashboard')
+    cy.get(loginElements.DashboardContainer)
+        .should('be.visible')
+        .invoke('text')
+        .should('match', /Employee Dashboard|Tableau de Bord Employé/)  
     cy.screenshot()
 });
 
@@ -57,7 +60,20 @@ When(`I click on the submit button`, () => {
     // [When] Describes the action or event that triggers the scenario.
     cy.get(loginElements.SubmitBtn).should('not.be.disabled').click()
 
-});
+    cy.wait(500)
+     cy.get('@LoginRequestAPI.all').then((calls) => {
+
+    if (calls.length > 0) {
+      //  API appelée → invalid credentials
+      const interception = calls[0]
+      expect(interception.response.statusCode).to.eq(500)
+    } else {
+      // Pas d'API → validation frontend (champs vides)
+      cy.log('No API call - frontend validation')
+    }
+})
+
+  });
 
 Then(`I should see the message {string}`, (message) => {
     // [Then] Describes the expected outcome or result of the scenario.
