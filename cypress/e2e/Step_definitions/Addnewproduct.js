@@ -1,7 +1,9 @@
 import { Given, When, Then,  } from 'cypress-cucumber-preprocessor/steps'
 import  AddnewproductElements from   '../Page_Objects/AddnewproductObjects'
 
-
+beforeEach(() => {
+    cy.intercept('POST', 'https://stocky-backend-dev.uksouth.cloudapp.azure.com/api/v1/Product').as('AddProductAPI')
+})
 
 Given(`I navigate to Add Product Page`, () => {
     cy.get(AddnewproductElements.Products_page).should('be.visible').click()
@@ -49,6 +51,29 @@ Then(`I should be able to add a new product with valid details`, () => {
     })
 
     cy.get(AddnewproductElements.Input_Product_TVA).clear().type(AddnewproductElements.TVA)
-    cy.get(AddnewproductElements.Btn_add_new_product).should('be.visible').click()
-    
-});
+    cy.get(AddnewproductElements.BTN_sumbit_product_add).should('be.visible').click()
+    cy.wait('@AddProductAPI').then((interception) => {     
+/// Validate API request
+        expect(interception.response.statusCode).to.eq(201)
+        expect(interception.request.body).to.have.property('title', AddnewproductElements.product_title)
+        expect(interception.request.body).to.have.property('description', AddnewproductElements.product_Description)
+        expect(interception.request.body).to.have.property('ref', AddnewproductElements.product_reference)
+        expect(interception.request.body).to.have.property('brand', AddnewproductElements.Product_marque)
+        expect(interception.request.body).to.have.property('productCategoryId')
+        expect(interception.request.body).to.have.property('productUnitId')
+        expect(interception.request.body).to.have.property('price').and.to.have.property('amount', parseFloat(AddnewproductElements.price))
+        expect(interception.request.body).to.have.property('price').and.to.have.property('currency')
+        expect(interception.request.body).to.have.property('tva', parseFloat(AddnewproductElements.TVA))
+/// Validate response body
+        expect(interception.response.body).to.have.property('id')
+        expect(interception.response.body).to.have.property('title', AddnewproductElements.product_title)
+        expect(interception.response.body).to.have.property('description', AddnewproductElements.product_Description)
+        expect(interception.response.body).to.have.property('ref', AddnewproductElements.product_reference)
+        expect(interception.response.body).to.have.property('brand', AddnewproductElements.Product_marque)
+        expect(interception.response.body).to.have.property('productCategory')
+        expect(interception.response.body).to.have.property('productUnit')
+        expect(interception.response.body).to.have.property('price').and.to.have.property('amount', parseFloat(AddnewproductElements.price))
+        expect(interception.response.body).to.have.property('price').and.to.have.property('currency')
+        expect(interception.response.body).to.have.property('tva', parseFloat(AddnewproductElements.TVA))
+    })
+})
