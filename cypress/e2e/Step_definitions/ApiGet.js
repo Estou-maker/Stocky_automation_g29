@@ -52,5 +52,47 @@ Then(`I should receive a response with all details of the dog breeds`, () => {
 
         cy.writeFile('cypress/fixtures/dog-names.csv', csvnames.join('\n'))
 
-})
-});
+        cy.readFile('cypress/fixtures/dog-names.csv').then(fileContent => {
+            const lines = fileContent.split(/\r?\n/).map(l => l.trim()).filter(Boolean)
+            expect(lines).to.have.length(names.length)
+            expect(lines[0]).to.eq(names[0])
+        
+    
+        const breeds = response.body.data.map(b => ({
+            
+            name: b.attributes.name,
+            maxWeight: Math.max(b.attributes.male_weight?.max || 0, b.attributes.female_weight?.max || 0 )}
+
+
+            
+
+            
+        ))
+        // sort by name (A-Z)
+        const sortedByName = [...breeds].sort((a, b) => a.name.localeCompare(b.name))
+
+        // sort by max weight
+
+        const sortedByWeight = [...breeds].sort((a, b) => b.maxWeight - a.maxWeight )
+
+        cy.log('Breeds sorted by name (A-Z):\n' + sortedByName.map(b => `${b.name} ${b.maxWeight}kg`).join('\n'))
+
+        cy.log('Breeds sorted by max weight:\n' +   sortedByWeight.map(b => `${b.name},${b.maxWeight}`).join('\n'))
+
+
+        const header = 'Breed,Maxweight(kg)';
+        const bynamesection = ['Sorted by Name', header, ...sortedByName.map(b => 
+            `${b.name},${b.maxWeight}`)].join('\n')
+
+        const byweightsection = ['Sorted by Weight', header, ...sortedByWeight.map(b => 
+            `${b.name},${b.maxWeight}kg`)].join('\n')
+
+        const combined = bynamesection + '\n\n' + byweightsection
+
+        cy.writeFile('cypress/fixtures/dog-names-sorted.csv', combined)
+
+    })
+
+    })
+
+})  
